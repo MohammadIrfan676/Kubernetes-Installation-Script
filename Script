@@ -1,0 +1,30 @@
+# On both master and worker node
+- sudo apt update -y
+- sudo apt install docker.io -y
+- sudo systemctl start docker 
+- sudo systemctl enable docker
+
+# Getting the required libraries and installing kubeadm 
+- > /etc/apt/sources.list.d/kubernetes.list
+- sudo apt update
+- curl -fsSL "https://packages.cloud.google.com/apt/doc/apt-key.gpg" | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/kubernetes-archive-keyring.gpg
+- echo 'deb https://packages.cloud.google.com/apt kubernetes-xenial main' > /etc/apt/sources.list.d/kubernetes.list
+- sudo apt update -y
+- sudo apt install kubeadm=1.20.0-00 kubectl=1.20.0-00 kubelet=1.20.0-00 -y
+
+# to avoid permission issue login as root user on both master and worker node
+- sudo su
+
+------------------------MASTER-------------------------
+- kubeadm init
+- export KUBECONFIG=/etc/kubernetes/admin.conf
+- kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
+- kubeadm token create --print-join-command
+
+
+------------------------WORKER-------------------------
+-  kubeadm reset pre-flight checks
+- # copy the token generated on master node and paste, add '--v=5' at the end of token 
+
+# Go to the master instance and open the port in security groups, do 
+- kubectl get nodes to know the connection established
